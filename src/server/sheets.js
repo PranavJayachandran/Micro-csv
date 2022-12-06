@@ -29,3 +29,15 @@ export const setActiveSheet = (sheetName) => {
   SpreadsheetApp.getActive().getSheetByName(sheetName).activate();
   return getSheetsData();
 };
+
+export const setData=(data)=>{
+
+   for(var i = 0; i < data.length; i++) {
+    SpreadsheetApp.getActiveSheet().appendRow(data[i]);
+  }
+}
+export const getData=()=>{
+  var range =SpreadsheetApp.getActiveSheet().getDataRange();
+  var value=range.getValues();
+  return value;
+}

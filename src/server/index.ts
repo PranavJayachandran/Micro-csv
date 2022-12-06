@@ -6,7 +6,7 @@ import {
   openAboutSidebar,
 } from './ui';
 
-import { getSheetsData, addSheet, deleteSheet, setActiveSheet } from './sheets';
+import { getSheetsData, addSheet, deleteSheet, setActiveSheet,setData,getData } from './sheets';
 
 // Public functions must be exported as named exports
 export {
@@ -15,8 +15,10 @@ export {
   openDialogBootstrap,
   openDialogTailwindCSS,
   openAboutSidebar,
+  getData,
   getSheetsData,
   addSheet,
   deleteSheet,
   setActiveSheet,
+  setData,
 };
