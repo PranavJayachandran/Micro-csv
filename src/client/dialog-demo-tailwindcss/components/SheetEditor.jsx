@@ -78,7 +78,7 @@ const SheetEditor = () => {
           )
           )}
         </div>
-        <div onClick={handle1} className="mt-5">
+        <div onClick={handle1} className="mt-5 cursor-pointer">
           Sumbit
         </div>
       </div>
