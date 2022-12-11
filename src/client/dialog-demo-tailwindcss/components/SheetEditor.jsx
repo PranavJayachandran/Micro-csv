@@ -51,10 +51,17 @@ const SheetEditor = () => {
   const pushData = () => {
     serverFunctions.setData(datax);
   }
-  const showPreview = () => {
+  const next = () => {
     addData();
-    setShowFinalData(1);
-    setShowImport(0);
+    setPage2(0);
+    setPage1(0);
+    setPage3(1);
+  }
+  const prev = () => {
+    addData();
+    setPage2(0);
+    setPage1(1);
+    setPage3(0);
   }
 
   const [k, setK] = useState(0);
@@ -62,24 +69,46 @@ const SheetEditor = () => {
     useEffect(() => {
 
     })
-    const handle1 = () => {
-      console.log("Submit");
+    const next = () => {
       pushData();
+    }
+    const prev = () => {
+      setPage3(0);
+      setPage2(1);
     }
     return (
       <div>
         <div className='flex flex-col mt-10 items-center'>
-          {datax.map((item) => (
-            <div className='flex gap-10'>
-              {item.map((o) => (
-                <div>{o}</div>
-              ))}
+          <div className='flex bg-[#e6e6e6] rounded-t-lg text-[18px] font-semibold'>
+            <div className='w-32 border-r-[1px] py-2  border-white'>
+              Index
             </div>
-          )
-          )}
+            {activeheader.map((item) => (
+              <div className='w-32 border-r-[1px] py-2  border-white'>
+                {item}
+              </div>
+            ))}
+          </div>
+          <div className=''>
+            {datax.map((item, index) => (
+              <div className='flex '>
+                <div className='w-32 border-[1px] py-2  border-[#e6e6e6]'>{index + 1}</div>
+                {item.map((o) => (
+                  <div className='w-32 border-[1px] py-2  border-[#e6e6e6]'>{o}</div>
+                ))}
+              </div>
+            )
+            )}
+          </div>
+
         </div>
-        <div onClick={handle1} className="mt-5 cursor-pointer">
-          Sumbit
+        <div className='flex justify-center gap-2'>
+          <div onClick={prev} className="bg-blue-100 px-4 py-2 rounded-lg mt-5 cursor-pointer text-center">
+            Prev
+          </div>
+          <div onClick={next} className=" bg-blue-100 px-4 py-2 rounded-lg mt-5 cursor-pointer text-center">
+            Next
+          </div>
         </div>
       </div>
     )
@@ -102,8 +131,10 @@ const SheetEditor = () => {
   const [headers, setHeader] = useState([]);
   const [activeheader, setActiveHeader] = useState([]);
   const [dataloaded, setDataLoaded] = useState(0);
-  const [showfinaldata, setShowFinalData] = useState(0);
-  const [showimport, setShowImport] = useState(1);
+  const [page1, setPage1] = useState(1);
+  const [page2, setPage2] = useState(0);
+  const [page3, setPage3] = useState(0);
+
 
   const fileReader = new FileReader();
 
@@ -144,37 +175,50 @@ const SheetEditor = () => {
 
       fileReader.readAsText(file);
     }
+    setPage2(1);
+    setPage1(0);
   };
   const map1 = new Map();
   const Mapping = (props) => {
-    map1.set(activeheader[props.index], " ");
+
+
+
+    map1.set(activeheader[props.index], "Select a column");
     for (let i = 0; i < headers.length; i++) {
       if (activeheader[props.index].toLowerCase() == headers[i].toLowerCase()) {
-        console.log(activeheader[props.index].toLowerCase(), headers[i].toLowerCase());
         map1.set(activeheader[props.index], headers[i],);
       }
     }
 
-    console.log(map1);
+
     const handle = (e) => {
       map1.set(activeheader[props.index], e.target.value,);
     }
+    const reset = () => {
+      map1.set(activeheader[props.index], "Select a column",);
+      console.log(map1);
+    }
 
     return (
-      <div>
-        <label for="cars">Choose maping for {activeheader[props.index]}</label>
-        <select onChange={handle}>
-          <option>{map1.get(activeheader[props.index])}</option>
-          {headers.map((item, index) =>
-          (
-            item != map1.get(activeheader[props.index]) ?
-              <option>{item}</option>
-              : <>
-              </>
-          )
-          )
-          }
-        </select>
+      <div className='flex border '>
+        <div className='w-4/12 text-left pl-10 py-3  border-r'>{activeheader[props.index]}</div>
+        <div className='w-8/12 text-left pl-10 py-3'>
+          <select onChange={handle} className="border w-10/12">
+            <option>{map1.get(activeheader[props.index])}</option>
+            {headers.map((item, index) =>
+            (
+              item != map1.get(activeheader[props.index]) ?
+                <option>{item}</option>
+                : <>
+                </>
+            )
+            )
+            }
+          </select>
+          <button onClick={reset}>
+            Reset
+          </button>
+        </div>
 
       </div>
     )
@@ -186,7 +230,7 @@ const SheetEditor = () => {
   return (
     <div>
       <div style={{ textAlign: "center" }}>
-        {showimport ? <div><form>
+        {page1 ? <div><form>
           <input
             type={"file"}
             id={"csvFileInput"}
@@ -202,47 +246,50 @@ const SheetEditor = () => {
             IMPORT CSV
           </button>
         </form>
-
-          <br />
-
-          <table>
-            <thead>
-              <tr key={"header"}>
-                {headerKeys.map((key) => (
-                  <th>{key}</th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {array.map((item) => (
-                <tr key={item.id}>
-                  {Object.values(item).map((val) => (
-                    <td>{val}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button onClick={showPreview}>
-            Add
-          </button>
-
-
-          <div className='mt-10'>
-            {activeheader.map((item, index) => (
-              <div>
-                <Mapping index={index} />
-              </div>
-            ))}
-          </div>
-        </div> :
+        </div>
+          :
           <></>
         }
 
-        {showfinaldata ? <Preview /> : <></>}
+
+        {page2 ?
+          <div className='mt-10'>
+            <div className=''>
+              <div className='flex justify-center align-center py-2 text-[18px] font-semibold border-2 bg-[#e6e6e6] rounded-t-lg'>
+                <div className='w-4/12 text-left pl-10'>
+                  Field
+                </div>
+                <div className='w-8/12 text-left pl-10 '>
+                  Field Columns
+                </div>
+              </div>
+              {activeheader.map((item, index) => (
+                <div>
+                  <Mapping index={index} />
+                </div>
+              ))}
+            </div>
+          </div>
+          : <>
+          </>
+        }
       </div>
-    </div>
+      {
+        page2 ?
+
+          <div className='flex justify-center gap-2'>
+            <div onClick={prev} className="bg-blue-100 px-4 py-2 rounded-lg mt-5 cursor-pointer text-center">
+              Prev
+            </div>
+            <div onClick={next} className=" bg-blue-100 px-4 py-2 rounded-lg mt-5 cursor-pointer text-center">
+              Next
+            </div>
+          </div>
+          : <></>
+      }
+
+      {page3 ? <Preview /> : <></>}
+    </div >
   );
 };
 
