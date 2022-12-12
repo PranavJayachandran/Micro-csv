@@ -63,19 +63,40 @@ const SheetEditor = () => {
     setPage1(1);
     setPage3(0);
   }
+  var previewdata;
+  const PreviewBox = (props) => {
+    const [value, setValue] = useState(props.item);
+    return (
+      <input className='w-32 border-[1px] py-2  border-[#e6e6e6]' value={value} onChange={(e) => { setValue(e.target.value); previewdata[props.rownumber][props.columnnumber] = value; console.log(props.rownumber, props.columnnumber, previewdata[props.rownumber][props.columnnumber]); }}></input>
+    )
+  }
+  const PreviewRow = (props) => {
+    const [item, setItem] = useState(props.row);
+    return (
+      item.map((o, index) => (
+        <div>
+          <PreviewBox item={o} rownumber={props.rownumber} columnnumber={index} />
+        </div>
+      ))
+    )
+  }
 
   const [k, setK] = useState(0);
   const Preview = () => {
-    useEffect(() => {
-
-    })
     const next = () => {
+      console.log(previewdata);
+      setDatax(previewdata);
       pushData();
     }
     const prev = () => {
       setPage3(0);
       setPage2(1);
     }
+    const [x, setX] = useState(0);
+    const handle = (e) => {
+      setX(e.target.value);
+    }
+    previewdata = datax;
     return (
       <div>
         <div className='flex flex-col mt-10 items-center'>
@@ -90,12 +111,10 @@ const SheetEditor = () => {
             ))}
           </div>
           <div className=''>
-            {datax.map((item, index) => (
+            {previewdata.map((item, index) => (
               <div className='flex '>
                 <div className='w-32 border-[1px] py-2  border-[#e6e6e6]'>{index + 1}</div>
-                {item.map((o) => (
-                  <div className='w-32 border-[1px] py-2  border-[#e6e6e6]'>{o}</div>
-                ))}
+                <PreviewRow row={item} rownumber={index} />
               </div>
             )
             )}
@@ -110,7 +129,7 @@ const SheetEditor = () => {
             Next
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -149,6 +168,7 @@ const SheetEditor = () => {
     const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
     const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
     setHeader(csvHeader);
+
     const array = csvRows.map(i => {
       const values = i.split(",");
       const obj = csvHeader.reduce((object, header, index) => {
@@ -179,9 +199,8 @@ const SheetEditor = () => {
     setPage1(0);
   };
   const map1 = new Map();
+  const [mapp, setMapp] = useState();
   const Mapping = (props) => {
-
-
 
     map1.set(activeheader[props.index], "Select a column");
     for (let i = 0; i < headers.length; i++) {
@@ -196,7 +215,6 @@ const SheetEditor = () => {
     }
     const reset = () => {
       map1.set(activeheader[props.index], "Select a column",);
-      console.log(map1);
     }
 
     return (
