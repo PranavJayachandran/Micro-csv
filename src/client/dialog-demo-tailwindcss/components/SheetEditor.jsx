@@ -226,12 +226,26 @@ const SheetEditor = () => {
   const [mapp, setMapp] = useState();
   const Mapping = (props) => {
 
-    map1.set(activeheader[props.index], "Select a column");
-    for (let i = 0; i < headers.length; i++) {
-      if (activeheader[props.index].toLowerCase() == headers[i].toLowerCase()) {
-        map1.set(activeheader[props.index], headers[i],);
+    const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+
+      map1.set(activeheader[props.index], "Select a column");
+      for (let i = 0; i < headers.length; i++) {
+        if (activeheader[props.index].toLowerCase() == headers[i].toLowerCase()) {
+          map1.set(activeheader[props.index], headers[i],);
+        }
       }
-    }
+      var temp = [];
+      temp.push(map1.get(activeheader[props.index]));
+      for (let i = 0; i < headers.length; i++) {
+        if (map1.get(activeheader[props.index]) !== headers[i]) {
+          temp.push(headers[i]);
+        }
+      }
+      setOptions(temp);
+    }, [])
+
 
 
     const handle = (e) => {
@@ -239,6 +253,17 @@ const SheetEditor = () => {
     }
     const reset = () => {
       map1.set(activeheader[props.index], "Select a column",);
+      var temp = [];
+      temp.push("Select a Column");
+      for (let i = 0; i < headers.length; i++)
+        temp.push(headers[i]);
+      setOptions([]);
+      for (let i = 0; i < 100; i++)
+        ;
+      setOptions(temp);
+      console.log("Here", temp, options);
+      for (let i = 0; i < 100; i++)
+        ;
     }
 
     return (
@@ -246,13 +271,9 @@ const SheetEditor = () => {
         <div className='w-4/12 text-left pl-10 py-3  border-r'>{activeheader[props.index]}</div>
         <div className='w-8/12 text-left pl-10 py-3'>
           <select onChange={handle} className="border w-10/12">
-            <option>{map1.get(activeheader[props.index])}</option>
-            {headers.map((item, index) =>
+            {options.map((item, index) =>
             (
-              item != map1.get(activeheader[props.index]) ?
-                <option>{item}</option>
-                : <>
-                </>
+              <option>{item}</option>
             )
             )
             }
