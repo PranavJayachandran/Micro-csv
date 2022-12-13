@@ -66,8 +66,20 @@ const SheetEditor = () => {
   var previewdata;
   const PreviewBox = (props) => {
     const [value, setValue] = useState(props.item);
+    console.log("value: ", value);
+    useEffect(() => {
+      previewdata[props.rownumber][props.columnnumber] = value;
+      console.log(value, value === "", props.rownumber, props.columnnumber, previewdata[props.rownumber][props.columnnumber]);
+    }, [value])
+
     return (
-      <input className='w-32 border-[1px] py-2  border-[#e6e6e6]' value={value} onChange={(e) => { setValue(e.target.value); previewdata[props.rownumber][props.columnnumber] = value; console.log(props.rownumber, props.columnnumber, previewdata[props.rownumber][props.columnnumber]); }}></input>
+      <input className={(value == "" || value === undefined) ? 'w-32 border-[1px] py-2  border-[#e6e6e6] bg-red-100' : 'w-32 border-[1px] py-2  border-[#e6e6e6]'} value={value} onChange={(e) => {
+        setValue(e.target.value);
+
+      }}
+      >
+
+      </input>
     )
   }
   const PreviewRow = (props) => {
@@ -111,10 +123,22 @@ const SheetEditor = () => {
             ))}
           </div>
           <div className=''>
-            {previewdata.map((item, index) => (
+            {datax.map((item, index) => (
               <div className='flex '>
                 <div className='w-32 border-[1px] py-2  border-[#e6e6e6]'>{index + 1}</div>
                 <PreviewRow row={item} rownumber={index} />
+                <div className='' onClick={() => {
+                  var temp = [];
+                  for (let i = 0; i < previewdata.length; i++) {
+                    if (i != index)
+                      temp.push(previewdata[i]);
+                  }
+                  previewdata = temp;
+                  setDatax(temp);
+                }}>
+                  Remove
+                </div>
+
               </div>
             )
             )}
